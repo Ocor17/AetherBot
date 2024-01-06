@@ -29,14 +29,23 @@ module.exports = {
 	},
 	async execute(interaction) {
 		const class_name = interaction.options.getString('class');
+
+		if (Object.keys(craftedBIS.CRAFTED_BIS).includes(class_name) == false){
+			interaction.reply({ content: `${class_name} is not a valid class`, ephemeral: true });
+			return;
+		}
+
+
 		const bis = craftedBIS.CRAFTED_BIS[class_name];
 		craftedURL = craftedBIS.BASE_URL + bis;
 		console.log("TIMESTAMP",interaction.createdTimestamp);
 
+		const order = (class_name +": "+craftedURL);
+
 		firestore.addOrder(
-			craftedURL,
+			order,
 			admin.firestore.Timestamp.now(), 
-			interaction.user.username,
+			interaction.user.displayName,
 			interaction.user.id,
 			);
 

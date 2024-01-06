@@ -18,7 +18,7 @@ module.exports = {
 		firestore.addOrder(
 			order,
 			admin.firestore.Timestamp.now(), 
-			interaction.user.username,
+			interaction.user.displayName,
 			interaction.user.id,
 			);
 
