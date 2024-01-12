@@ -13,21 +13,25 @@ module.exports = {
 
         registerID=crypto.randomUUID();
 
-		while(firestore.isRegistered(registerID)){
+		//console.log(firestore.isUnique(registerID));
+
+		while( await firestore.isUnique(registerID,interaction.user.id)){
+			console.log(registerID,"is taken")
 			registerID=crypto.randomUUID();
 		}
 
-		console.log("UUID:",registerID);
-
-		console.log("REGISTERING")
-
-        firestore.register(
+        const success = await firestore.register(
             interaction.user.id,
             interaction.user.displayName,
             admin.firestore.Timestamp.now(),
             registerID
         );
 
+		if (success) {
+		//Consider a better error message 
 		interaction.reply({ content: `registration ID is: ${registerID}`, ephemeral: true });
+		} else {
+			interaction.reply({ content: `registration failed, account may already exist`, ephemeral: true });
+		}
 	},
 };

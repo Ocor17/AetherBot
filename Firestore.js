@@ -27,35 +27,56 @@ function addOrder(
   });
 }
 
-function register(
+async function register(
   discord_id,
   discord_name,
   createdTimestamp,
   registrationID
 ){
-  database.collection(USERS_COLLECTION).add({
-    active:true,
-    discord_id:discord_id,
-    discord_name:discord_name,
-    role:"user",
-    created:createdTimestamp,
-    auth_id:null,
-    registrationID:registrationID,
+  const existsRef = await database.collection(USERS_COLLECTION).where("discord_id", "==",discord_id).get();
+  console.log(existsRef.empty);
+  if( existsRef.empty){
 
-  }).then((docRef) => {
-    console.log("Document written with ID: ", docRef.id);
-  })
-  .catch((error) => {
-      console.error("Error adding document: ", error);
-  });
+    database.collection(USERS_COLLECTION).add({
+      active:true,
+      discord_id:discord_id,
+      discord_name:discord_name,
+      role:"user",
+      created:createdTimestamp,
+      auth_id:null,
+      registrationID:registrationID,
+
+    }).then((docRef) => {
+      console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
+
+    return true;
+  }
+  else{
+    return false;
+  }
 }
 
-function isRegistered(registrationID){
-  return database.collection(USERS_COLLECTION).where("registrationID", "==", registrationID).get().exists;
+async function isUnique(registrationID){
+  const snapshot = database.collection(USERS_COLLECTION);
+  const query = snapshot
+    .where("registrationID", "==", registrationID);
+
+  const querySnapshot = await query.get();
+  //const data = querySnapshot.data();
+
+  //console.log(querySnapshot);
+
+  //console.log(snapshot);
+  return !querySnapshot.empty;
+
 }
 
 module.exports = {
   addOrder,
   register,
-  isRegistered
+  isUnique
 };
