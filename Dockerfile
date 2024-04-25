@@ -1,4 +1,4 @@
-FROM node:21.6.2-bookworm-slim
+FROM node:21.7.3-bookworm-slim
 
 COPY . .
 COPY ./firebase-key.json .
