@@ -14,5 +14,8 @@
     "firebase": "^12.6.0",
     "dotenv": "^16.4.5",
     "firebase-admin": "^13.0.0"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
   }
 }
